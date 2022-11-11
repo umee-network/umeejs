@@ -38,11 +38,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ebrahimUmee/umeejs"
+    "url": "https://github.com/umee-network/umeejs"
   },
   "keywords": [],
   "bugs": {
-    "url": "https://github.com/ebrahimUmee/umeejs/issues"
+    "url": "https://github.com/umee-network/umeejs/issues"
   },
   "devDependencies": {
     "@babel/cli": "7.19.3",
