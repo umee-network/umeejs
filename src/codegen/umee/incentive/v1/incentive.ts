@@ -1,0 +1,390 @@
+import { Coin, CoinAmino, CoinSDKType } from "../../../cosmos/base/v1beta1/coin";
+import { BinaryReader, BinaryWriter } from "../../../binary";
+import { Decimal } from "@cosmjs/math";
+/** Params defines the parameters for the incentive module. */
+export interface Params {
+  /**
+   * max_unbondings is the maximum amount of concurrent unbondings an address can have
+   * of each bonded uToken denom. Zero is interpreted as no limit.
+   */
+  maxUnbondings: number;
+  /** unbonding_duration is the unbonding duration (in seconds). */
+  unbondingDuration: bigint;
+  /**
+   * emergency_unbond_fee is the portion of a bond that is paid when it is instantly
+   * released using MsgEmergencyUnbond. For example, 0.01 is a 1% fee. Ranges 0-1.
+   */
+  emergencyUnbondFee: string;
+}
+export interface ParamsProtoMsg {
+  typeUrl: "/umee.incentive.v1.Params";
+  value: Uint8Array;
+}
+/** Params defines the parameters for the incentive module. */
+export interface ParamsAmino {
+  /**
+   * max_unbondings is the maximum amount of concurrent unbondings an address can have
+   * of each bonded uToken denom. Zero is interpreted as no limit.
+   */
+  max_unbondings?: number;
+  /** unbonding_duration is the unbonding duration (in seconds). */
+  unbonding_duration?: string;
+  /**
+   * emergency_unbond_fee is the portion of a bond that is paid when it is instantly
+   * released using MsgEmergencyUnbond. For example, 0.01 is a 1% fee. Ranges 0-1.
+   */
+  emergency_unbond_fee?: string;
+}
+export interface ParamsAminoMsg {
+  type: "/umee.incentive.v1.Params";
+  value: ParamsAmino;
+}
+/** Params defines the parameters for the incentive module. */
+export interface ParamsSDKType {
+  max_unbondings: number;
+  unbonding_duration: bigint;
+  emergency_unbond_fee: string;
+}
+/**
+ * IncentiveProgram defines a liquidity mining incentive program on a single
+ * locked uToken denom that will run for a set amount of time.
+ */
+export interface IncentiveProgram {
+  /**
+   * ID uniquely identifies the incentive program after it has been created.
+   * It is zero when the program is being proposed by governance, and is set
+   * to its final value when the proposal passes.
+   */
+  ID: number;
+  /**
+   * start_time is the unix time (in seconds) at which the incentives begin.
+   * If a program is passed after its intended start time, its start time
+   * will be increased to the current time, with program duration unchanged.
+   */
+  startTime: bigint;
+  /**
+   * duration is the length of the incentive program from start time to
+   * completion in seconds.
+   */
+  duration: bigint;
+  /**
+   * uToken is the incentivized uToken collateral denom. Suppliers who collateralize
+   * this asset then bond it to the incentive module are eligible for this program's
+   * rewards.
+   */
+  uToken: string;
+  /**
+   * funded indicates whether a program bas been funded. This can happen when
+   * a program passes if funding from community fund, or any time before the
+   * program's start time if funding with MsgSponsor. A program that reaches
+   * its start time without being funded is cancelled.
+   */
+  funded: boolean;
+  /**
+   * total_rewards are total amount of rewards which can be distributed to
+   * suppliers by this program. This is set to its final value when the program
+   * is proposed by governance.
+   */
+  totalRewards: Coin;
+  /**
+   * remaining_rewards are total amount of this program's funded rewards
+   * which have not yet been allocated to suppliers. This is zero until the
+   * program is both passed by governance and funded, at which point it
+   * starts at the same value as total_rewards then begins decreasing
+   * to zero as the program runs to completion.
+   */
+  remainingRewards: Coin;
+}
+export interface IncentiveProgramProtoMsg {
+  typeUrl: "/umee.incentive.v1.IncentiveProgram";
+  value: Uint8Array;
+}
+/**
+ * IncentiveProgram defines a liquidity mining incentive program on a single
+ * locked uToken denom that will run for a set amount of time.
+ */
+export interface IncentiveProgramAmino {
+  /**
+   * ID uniquely identifies the incentive program after it has been created.
+   * It is zero when the program is being proposed by governance, and is set
+   * to its final value when the proposal passes.
+   */
+  ID?: number;
+  /**
+   * start_time is the unix time (in seconds) at which the incentives begin.
+   * If a program is passed after its intended start time, its start time
+   * will be increased to the current time, with program duration unchanged.
+   */
+  start_time?: string;
+  /**
+   * duration is the length of the incentive program from start time to
+   * completion in seconds.
+   */
+  duration?: string;
+  /**
+   * uToken is the incentivized uToken collateral denom. Suppliers who collateralize
+   * this asset then bond it to the incentive module are eligible for this program's
+   * rewards.
+   */
+  uToken?: string;
+  /**
+   * funded indicates whether a program bas been funded. This can happen when
+   * a program passes if funding from community fund, or any time before the
+   * program's start time if funding with MsgSponsor. A program that reaches
+   * its start time without being funded is cancelled.
+   */
+  funded?: boolean;
+  /**
+   * total_rewards are total amount of rewards which can be distributed to
+   * suppliers by this program. This is set to its final value when the program
+   * is proposed by governance.
+   */
+  total_rewards?: CoinAmino;
+  /**
+   * remaining_rewards are total amount of this program's funded rewards
+   * which have not yet been allocated to suppliers. This is zero until the
+   * program is both passed by governance and funded, at which point it
+   * starts at the same value as total_rewards then begins decreasing
+   * to zero as the program runs to completion.
+   */
+  remaining_rewards?: CoinAmino;
+}
+export interface IncentiveProgramAminoMsg {
+  type: "/umee.incentive.v1.IncentiveProgram";
+  value: IncentiveProgramAmino;
+}
+/**
+ * IncentiveProgram defines a liquidity mining incentive program on a single
+ * locked uToken denom that will run for a set amount of time.
+ */
+export interface IncentiveProgramSDKType {
+  ID: number;
+  start_time: bigint;
+  duration: bigint;
+  uToken: string;
+  funded: boolean;
+  total_rewards: CoinSDKType;
+  remaining_rewards: CoinSDKType;
+}
+function createBaseParams(): Params {
+  return {
+    maxUnbondings: 0,
+    unbondingDuration: BigInt(0),
+    emergencyUnbondFee: ""
+  };
+}
+export const Params = {
+  typeUrl: "/umee.incentive.v1.Params",
+  encode(message: Params, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
+    if (message.maxUnbondings !== 0) {
+      writer.uint32(8).uint32(message.maxUnbondings);
+    }
+    if (message.unbondingDuration !== BigInt(0)) {
+      writer.uint32(16).int64(message.unbondingDuration);
+    }
+    if (message.emergencyUnbondFee !== "") {
+      writer.uint32(26).string(Decimal.fromUserInput(message.emergencyUnbondFee, 18).atomics);
+    }
+    return writer;
+  },
+  decode(input: BinaryReader | Uint8Array, length?: number): Params {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseParams();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.maxUnbondings = reader.uint32();
+          break;
+        case 2:
+          message.unbondingDuration = reader.int64();
+          break;
+        case 3:
+          message.emergencyUnbondFee = Decimal.fromAtomics(reader.string(), 18).toString();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+  fromPartial(object: Partial<Params>): Params {
+    const message = createBaseParams();
+    message.maxUnbondings = object.maxUnbondings ?? 0;
+    message.unbondingDuration = object.unbondingDuration !== undefined && object.unbondingDuration !== null ? BigInt(object.unbondingDuration.toString()) : BigInt(0);
+    message.emergencyUnbondFee = object.emergencyUnbondFee ?? "";
+    return message;
+  },
+  fromAmino(object: ParamsAmino): Params {
+    const message = createBaseParams();
+    if (object.max_unbondings !== undefined && object.max_unbondings !== null) {
+      message.maxUnbondings = object.max_unbondings;
+    }
+    if (object.unbonding_duration !== undefined && object.unbonding_duration !== null) {
+      message.unbondingDuration = BigInt(object.unbonding_duration);
+    }
+    if (object.emergency_unbond_fee !== undefined && object.emergency_unbond_fee !== null) {
+      message.emergencyUnbondFee = object.emergency_unbond_fee;
+    }
+    return message;
+  },
+  toAmino(message: Params): ParamsAmino {
+    const obj: any = {};
+    obj.max_unbondings = message.maxUnbondings;
+    obj.unbonding_duration = message.unbondingDuration ? message.unbondingDuration.toString() : undefined;
+    obj.emergency_unbond_fee = message.emergencyUnbondFee;
+    return obj;
+  },
+  fromAminoMsg(object: ParamsAminoMsg): Params {
+    return Params.fromAmino(object.value);
+  },
+  fromProtoMsg(message: ParamsProtoMsg): Params {
+    return Params.decode(message.value);
+  },
+  toProto(message: Params): Uint8Array {
+    return Params.encode(message).finish();
+  },
+  toProtoMsg(message: Params): ParamsProtoMsg {
+    return {
+      typeUrl: "/umee.incentive.v1.Params",
+      value: Params.encode(message).finish()
+    };
+  }
+};
+function createBaseIncentiveProgram(): IncentiveProgram {
+  return {
+    ID: 0,
+    startTime: BigInt(0),
+    duration: BigInt(0),
+    uToken: "",
+    funded: false,
+    totalRewards: Coin.fromPartial({}),
+    remainingRewards: Coin.fromPartial({})
+  };
+}
+export const IncentiveProgram = {
+  typeUrl: "/umee.incentive.v1.IncentiveProgram",
+  encode(message: IncentiveProgram, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
+    if (message.ID !== 0) {
+      writer.uint32(8).uint32(message.ID);
+    }
+    if (message.startTime !== BigInt(0)) {
+      writer.uint32(16).int64(message.startTime);
+    }
+    if (message.duration !== BigInt(0)) {
+      writer.uint32(24).int64(message.duration);
+    }
+    if (message.uToken !== "") {
+      writer.uint32(34).string(message.uToken);
+    }
+    if (message.funded === true) {
+      writer.uint32(40).bool(message.funded);
+    }
+    if (message.totalRewards !== undefined) {
+      Coin.encode(message.totalRewards, writer.uint32(50).fork()).ldelim();
+    }
+    if (message.remainingRewards !== undefined) {
+      Coin.encode(message.remainingRewards, writer.uint32(58).fork()).ldelim();
+    }
+    return writer;
+  },
+  decode(input: BinaryReader | Uint8Array, length?: number): IncentiveProgram {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseIncentiveProgram();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.ID = reader.uint32();
+          break;
+        case 2:
+          message.startTime = reader.int64();
+          break;
+        case 3:
+          message.duration = reader.int64();
+          break;
+        case 4:
+          message.uToken = reader.string();
+          break;
+        case 5:
+          message.funded = reader.bool();
+          break;
+        case 6:
+          message.totalRewards = Coin.decode(reader, reader.uint32());
+          break;
+        case 7:
+          message.remainingRewards = Coin.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+  fromPartial(object: Partial<IncentiveProgram>): IncentiveProgram {
+    const message = createBaseIncentiveProgram();
+    message.ID = object.ID ?? 0;
+    message.startTime = object.startTime !== undefined && object.startTime !== null ? BigInt(object.startTime.toString()) : BigInt(0);
+    message.duration = object.duration !== undefined && object.duration !== null ? BigInt(object.duration.toString()) : BigInt(0);
+    message.uToken = object.uToken ?? "";
+    message.funded = object.funded ?? false;
+    message.totalRewards = object.totalRewards !== undefined && object.totalRewards !== null ? Coin.fromPartial(object.totalRewards) : undefined;
+    message.remainingRewards = object.remainingRewards !== undefined && object.remainingRewards !== null ? Coin.fromPartial(object.remainingRewards) : undefined;
+    return message;
+  },
+  fromAmino(object: IncentiveProgramAmino): IncentiveProgram {
+    const message = createBaseIncentiveProgram();
+    if (object.ID !== undefined && object.ID !== null) {
+      message.ID = object.ID;
+    }
+    if (object.start_time !== undefined && object.start_time !== null) {
+      message.startTime = BigInt(object.start_time);
+    }
+    if (object.duration !== undefined && object.duration !== null) {
+      message.duration = BigInt(object.duration);
+    }
+    if (object.uToken !== undefined && object.uToken !== null) {
+      message.uToken = object.uToken;
+    }
+    if (object.funded !== undefined && object.funded !== null) {
+      message.funded = object.funded;
+    }
+    if (object.total_rewards !== undefined && object.total_rewards !== null) {
+      message.totalRewards = Coin.fromAmino(object.total_rewards);
+    }
+    if (object.remaining_rewards !== undefined && object.remaining_rewards !== null) {
+      message.remainingRewards = Coin.fromAmino(object.remaining_rewards);
+    }
+    return message;
+  },
+  toAmino(message: IncentiveProgram): IncentiveProgramAmino {
+    const obj: any = {};
+    obj.ID = message.ID;
+    obj.start_time = message.startTime ? message.startTime.toString() : undefined;
+    obj.duration = message.duration ? message.duration.toString() : undefined;
+    obj.uToken = message.uToken;
+    obj.funded = message.funded;
+    obj.total_rewards = message.totalRewards ? Coin.toAmino(message.totalRewards) : undefined;
+    obj.remaining_rewards = message.remainingRewards ? Coin.toAmino(message.remainingRewards) : undefined;
+    return obj;
+  },
+  fromAminoMsg(object: IncentiveProgramAminoMsg): IncentiveProgram {
+    return IncentiveProgram.fromAmino(object.value);
+  },
+  fromProtoMsg(message: IncentiveProgramProtoMsg): IncentiveProgram {
+    return IncentiveProgram.decode(message.value);
+  },
+  toProto(message: IncentiveProgram): Uint8Array {
+    return IncentiveProgram.encode(message).finish();
+  },
+  toProtoMsg(message: IncentiveProgram): IncentiveProgramProtoMsg {
+    return {
+      typeUrl: "/umee.incentive.v1.IncentiveProgram",
+      value: IncentiveProgram.encode(message).finish()
+    };
+  }
+};

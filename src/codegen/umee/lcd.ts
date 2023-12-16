@@ -1,4 +1,4 @@
-import { LCDClient } from "@osmonauts/lcd";
+import { LCDClient } from "@cosmology/lcd";
 export const createLCDClient = async ({
   restEndpoint
 }: {
@@ -96,13 +96,33 @@ export const createLCDClient = async ({
       }
     },
     umee: {
+      incentive: {
+        v1: new (await import("./incentive/v1/query.lcd")).LCDQueryClient({
+          requestClient
+        })
+      },
       leverage: {
         v1: new (await import("./leverage/v1/query.lcd")).LCDQueryClient({
           requestClient
         })
       },
+      metoken: {
+        v1: new (await import("./metoken/v1/query.lcd")).LCDQueryClient({
+          requestClient
+        })
+      },
       oracle: {
         v1: new (await import("./oracle/v1/query.lcd")).LCDQueryClient({
+          requestClient
+        })
+      },
+      ugov: {
+        v1: new (await import("./ugov/v1/query.lcd")).LCDQueryClient({
+          requestClient
+        })
+      },
+      uibc: {
+        v1: new (await import("./uibc/v1/query.lcd")).LCDQueryClient({
           requestClient
         })
       }

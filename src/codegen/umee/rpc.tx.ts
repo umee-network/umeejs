@@ -47,11 +47,23 @@ export const createRPCMsgClient = async ({
     }
   },
   umee: {
+    incentive: {
+      v1: new (await import("./incentive/v1/tx.rpc.msg")).MsgClientImpl(rpc)
+    },
     leverage: {
       v1: new (await import("./leverage/v1/tx.rpc.msg")).MsgClientImpl(rpc)
     },
+    metoken: {
+      v1: new (await import("./metoken/v1/tx.rpc.msg")).MsgClientImpl(rpc)
+    },
     oracle: {
       v1: new (await import("./oracle/v1/tx.rpc.msg")).MsgClientImpl(rpc)
+    },
+    ugov: {
+      v1: new (await import("./ugov/v1/tx.rpc.msg")).MsgClientImpl(rpc)
+    },
+    uibc: {
+      v1: new (await import("./uibc/v1/tx.rpc.msg")).MsgClientImpl(rpc)
     }
   }
 });

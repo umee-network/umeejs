@@ -65,11 +65,23 @@ export const createRPCQueryClient = async ({
       }
     },
     umee: {
+      incentive: {
+        v1: (await import("./incentive/v1/query.rpc.Query")).createRpcQueryExtension(client)
+      },
       leverage: {
         v1: (await import("./leverage/v1/query.rpc.Query")).createRpcQueryExtension(client)
       },
+      metoken: {
+        v1: (await import("./metoken/v1/query.rpc.Query")).createRpcQueryExtension(client)
+      },
       oracle: {
         v1: (await import("./oracle/v1/query.rpc.Query")).createRpcQueryExtension(client)
+      },
+      ugov: {
+        v1: (await import("./ugov/v1/query.rpc.Query")).createRpcQueryExtension(client)
+      },
+      uibc: {
+        v1: (await import("./uibc/v1/query.rpc.Query")).createRpcQueryExtension(client)
       }
     }
   };
