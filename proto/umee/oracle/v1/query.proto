@@ -4,9 +4,10 @@ package umee.oracle.v1;
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "umee/oracle/v1/oracle.proto";
+import "umee/oracle/v1/genesis.proto";
 import "cosmos/base/v1beta1/coin.proto";
 
-option go_package = "github.com/umee-network/umee/v3/x/oracle/types";
+option go_package = "github.com/umee-network/umee/v6/x/oracle/types";
 
 option (gogoproto.goproto_getters_all) = false;
 
@@ -64,7 +65,7 @@ service Query {
   rpc AggregateVote(QueryAggregateVote)
       returns (QueryAggregateVoteResponse) {
     option (google.api.http).get =
-        "/umee/oracle/v1/valdiators/{validator_addr}/aggregate_vote";
+        "/umee/oracle/v1/validators/{validator_addr}/aggregate_vote";
   }
 
   // AggregateVotes returns aggregate votes of all validators
@@ -78,12 +79,85 @@ service Query {
     option (google.api.http).get = "/umee/oracle/v1/params";
   }
 
-  // Medians returns medians of all denoms
+  // Medians returns medians of all denoms,
+  // or, if specified, returns a single median
   rpc Medians(QueryMedians)
       returns (QueryMediansResponse) {
     option (google.api.http).get =
         "/umee/historacle/v1/denoms/medians";
   }
+
+  // MedianDeviations returns median deviations of all denoms,
+  // or, if specified, returns a single median deviation
+  rpc MedianDeviations(QueryMedianDeviations)
+      returns (QueryMedianDeviationsResponse) {
+    option (google.api.http).get =
+        "/umee/historacle/v1/denoms/median_deviations";
+  }
+
+  // QueryAvgPrice returns avg price of a given denom (required).
+  rpc AvgPrice(QueryAvgPrice)
+      returns (QueryAvgPriceResponse) {
+    option (google.api.http).get =
+        "/umee/historacle/v1/avg_price/{denom}";
+  }
+
+  // ExgRatesWithTimestamp returns exchange rates of all denoms with timestamp,
+  // or, if specified, returns a single denom
+  rpc ExgRatesWithTimestamp(QueryExgRatesWithTimestamp)
+      returns (QueryExgRatesWithTimestampResponse) {
+    option (google.api.http).get =
+        "/umee/oracle/v1/denoms/exg_rates_timestamp";
+  }
+
+  // MissCounters returns oracle missing votes count of validators.
+  rpc MissCounters(QueryMissCounters)
+      returns (QueryMissCountersResponse) {
+    option (google.api.http).get =
+        "/umee/oracle/v1/miss_counters";
+  }
+}
+
+// QueryMissCounters is the request type for the Query/MissCounters RPC
+// method.
+message QueryMissCounters {
+  option (gogoproto.equal)           = false;
+  option (gogoproto.goproto_getters) = false;
+  string validator                   = 1;
+}
+
+// QueryMissCountersResponse is response type for the Query/MissCounters RPC method.
+message QueryMissCountersResponse {
+  repeated PriceMissCounter miss_counters = 1 [
+    (gogoproto.nullable) = false
+  ];
+}
+
+// PriceMissCounter is the validator's oracle price votes missing count.
+message PriceMissCounter {
+  string validator = 1;
+  // miss_counter defines the oracle miss counter of a validator
+  uint64 miss_counter = 2;
+}
+
+// QueryExgRatesWithTimestamp is the request type for the Query/ExchangeRatesWithTimestamp RPC
+// method.
+message QueryExgRatesWithTimestamp {
+  option (gogoproto.equal)           = false;
+  option (gogoproto.goproto_getters) = false;
+
+  // denom defines the denomination to query for.
+  string denom = 1;
+}
+
+// QueryExgRatesWithTimestampResponse is response type for the
+// Query/ExchangeRatesWithTimestamp RPC method.
+message QueryExgRatesWithTimestampResponse {
+  // exchange_rates defines a list of the exchange rate for all whitelisted
+  // denoms with timestamp
+  repeated DenomExchangeRate exg_rates = 1 [
+    (gogoproto.nullable) = false
+  ];
 }
 
 // QueryExchangeRates is the request type for the Query/ExchangeRate RPC
@@ -114,7 +188,7 @@ message QueryActiveExchangeRates {}
 // QueryActiveExchangeRatesResponse is response type for the
 // Query/ActiveExchangeRates RPC method.
 message QueryActiveExchangeRatesResponse {
-  // activeRates defines a list of the denomination which oracle prices aggreed
+  // activeRates defines a list of the denomination which oracle prices agreed
   // upon.
   repeated string active_rates = 1;
 }
@@ -243,14 +317,48 @@ message QueryMedians {
   option (gogoproto.goproto_getters) = false;
   // denom defines the denomination to query for.
   string denom = 1;
+  // numStamps defines the number of median stamps to query for. numStamps
+  // must be greater than 0.
+  uint32 numStamps = 2;
 }
 
 // QueryMediansResponse is response type for the
 // Query/Medians RPC method.
 message QueryMediansResponse {
   // medians defines a list of the medians for all stamped denoms.
-  repeated cosmos.base.v1beta1.DecCoin medians = 1 [
-    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.DecCoins",
-    (gogoproto.nullable)     = false
+  repeated Price medians = 1 [(gogoproto.nullable) = false];
+}
+
+// QueryMedianDeviations is the request type for the Query/MedianDeviations RPC Response.
+message QueryMedianDeviations {
+  option (gogoproto.equal)           = false;
+  option (gogoproto.goproto_getters) = false;
+  // denom defines the denomination to query for.
+  string denom = 1;
+}
+
+// QueryMedianDeviationsResponse is response type for the
+// Query/MedianDeviations RPC method.
+message QueryMedianDeviationsResponse {
+  // medians defines a list of the median deviations for all stamped denoms.
+  repeated Price medianDeviations = 1 [(gogoproto.nullable) = false];
+}
+
+// QueryAvgPrice is a request type for AvgPrice method
+message QueryAvgPrice {
+  option (gogoproto.equal)           = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string denom = 1;
+}
+
+// QueryAvgPriceResponse is a response type for AvgPrice method
+message QueryAvgPriceResponse {
+  option (gogoproto.equal)           = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string price = 1 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (gogoproto.nullable)   = false
   ];
 }

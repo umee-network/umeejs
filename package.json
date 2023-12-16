@@ -3,7 +3,7 @@
   "version": "0.0.3",
   "description": "interact with the umee blockchain",
   "author": "Ebrahim Elbagory <ebrahim@umee.cc>",
-  "homepage": "https://github.com/ebrahimUmee/umeejs#readme",
+  "homepage": "https://github.com/umee-network/umeejs#readme",
   "license": "SEE LICENSE IN LICENSE",
   "main": "main/index.js",
   "module": "module/index.js",
@@ -85,8 +85,8 @@
     "@babel/runtime": "^7.19.4",
     "@cosmjs/amino": "^0.29.3",
     "@cosmjs/proto-signing": "^0.29.3",
-    "@cosmjs/stargate": "^0.29.3",
-    "@cosmjs/tendermint-rpc": "^0.29.3",
+    "@cosmjs/stargate": "^0.32.1",
+    "@cosmjs/tendermint-rpc": "^0.32.1",
     "protobufjs": "^6.11.2"
   }
 }

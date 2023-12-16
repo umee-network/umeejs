@@ -14,21 +14,18 @@ export const MessageComposer = {
         value: MsgAggregateExchangeRatePrevote.encode(value).finish()
       };
     },
-
     aggregateExchangeRateVote(value: MsgAggregateExchangeRateVote) {
       return {
         typeUrl: "/umee.oracle.v1.MsgAggregateExchangeRateVote",
         value: MsgAggregateExchangeRateVote.encode(value).finish()
       };
     },
-
     delegateFeedConsent(value: MsgDelegateFeedConsent) {
       return {
         typeUrl: "/umee.oracle.v1.MsgDelegateFeedConsent",
         value: MsgDelegateFeedConsent.encode(value).finish()
       };
     }
-
   },
   withTypeUrl: {
     aggregateExchangeRatePrevote(value: MsgAggregateExchangeRatePrevote) {
@@ -37,21 +34,18 @@ export const MessageComposer = {
         value
       };
     },
-
     aggregateExchangeRateVote(value: MsgAggregateExchangeRateVote) {
       return {
         typeUrl: "/umee.oracle.v1.MsgAggregateExchangeRateVote",
         value
       };
     },
-
     delegateFeedConsent(value: MsgDelegateFeedConsent) {
       return {
         typeUrl: "/umee.oracle.v1.MsgDelegateFeedConsent",
         value
       };
     }
-
   },
   fromPartial: {
     aggregateExchangeRatePrevote(value: MsgAggregateExchangeRatePrevote) {
@@ -60,20 +54,17 @@ export const MessageComposer = {
         value: MsgAggregateExchangeRatePrevote.fromPartial(value)
       };
     },
-
     aggregateExchangeRateVote(value: MsgAggregateExchangeRateVote) {
       return {
         typeUrl: "/umee.oracle.v1.MsgAggregateExchangeRateVote",
         value: MsgAggregateExchangeRateVote.fromPartial(value)
       };
     },
-
     delegateFeedConsent(value: MsgDelegateFeedConsent) {
       return {
         typeUrl: "/umee.oracle.v1.MsgDelegateFeedConsent",
         value: MsgDelegateFeedConsent.fromPartial(value)
       };
     }
-
   }
 };
